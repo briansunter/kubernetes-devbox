@@ -1,0 +1,23 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: name-virtual-host-ingress
+spec:
+  rules:
+  - host: code.kube.bsun.io
+    http:
+      paths:
+      - backend:
+          serviceName: devbox
+          servicePort: 80
+  - host: foo.kube.bsun.io
+    http:
+      paths:
+      - backend:
+          serviceName: devbox
+          servicePort: 8081
+  - http:
+      paths:
+      - backend:
+          serviceName: service3
+          servicePort: 80

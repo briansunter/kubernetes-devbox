@@ -1,0 +1,52 @@
+
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: devbox
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: devbox
+  template:
+    metadata:
+      labels:
+        app: devbox
+    spec:
+      volumes:
+      - name: devbox-pv-storage
+        persistentVolumeClaim:
+          claimName: devbox-pv-claim
+      containers:
+      - name: devbox
+        image: briansunter/ide:1
+        env: 
+        - name: PASSWORD
+          valueFrom: 
+            secretKeyRef: 
+              name: idepassword
+              key: PASSWORD
+        ports:
+        - containerPort: 8443
+        - containerPort: 1337
+        volumeMounts:
+        - mountPath: "/root/project"
+          name: devbox-pv-storage
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: devbox
+spec:
+  ports:
+  - port: 80
+    targetPort: 8443
+    protocol: TCP
+    name: http
+  - port: 8081
+    targetPort: 1337
+    protocol: TCP
+    name: test
+  selector:
+    app: devbox
+---
